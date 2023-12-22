@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  :moneybag: Project aimed at unifying payment providers across platforms.</a>
+  📡 Project for sending messages via email, whatsapp and telegram.</a>
 </p>
 
 <div align="center">
