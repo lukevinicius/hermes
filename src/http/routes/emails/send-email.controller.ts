@@ -1,38 +1,32 @@
 import Elysia, { t } from 'elysia'
 import { unlinkSync } from 'node:fs'
 
-import { MassEmailSendingService } from '@/services/mass-email-sending/mass-email-sending.service'
+import { SendEmailService } from '@/services/send-email/send-email.service'
 
-export const massEmailSending = new Elysia().post(
-  '/mass-email-sending',
+export const sendEmail = new Elysia().post(
+  '/send-email',
   async ({ body }) => {
     // Save the files
-    const csvPath = `${process.cwd()}/src/email/emails.csv`
-    await Bun.write(csvPath, body.csv)
     const emailTemplatePath = `${process.cwd()}/src/email/emailTemplate.tsx`
     await Bun.write(emailTemplatePath, body.emailTemplate)
 
-    const massEmailSendingService = new MassEmailSendingService()
+    const sendEmailService = new SendEmailService()
 
-    await massEmailSendingService.execute({
+    await sendEmailService.execute({
       from: body.from,
+      to: body.to,
       subject: body.subject,
-      csvPath,
       emailTemplatePath,
     })
 
     // unlink the files
-    await unlinkSync(csvPath)
     await unlinkSync(emailTemplatePath)
   },
   {
     body: t.Object({
       from: t.String(),
+      to: t.String(),
       subject: t.String(),
-      csv: t.File({
-        required: true,
-        type: 'text/csv',
-      }),
       emailTemplate: t.File({
         required: true,
       }),
