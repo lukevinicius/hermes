@@ -5,7 +5,7 @@ import { SendEmailService } from '@/services/send-email/send-email.service'
 
 export const sendEmail = new Elysia().post(
   '/send-email',
-  async ({ body }) => {
+  async ({ body, set }) => {
     // Save the files
     const emailTemplatePath = `${process.cwd()}/src/email/emailTemplate.tsx`
     await Bun.write(emailTemplatePath, body.emailTemplate)
@@ -21,6 +21,11 @@ export const sendEmail = new Elysia().post(
 
     // unlink the files
     await unlinkSync(emailTemplatePath)
+
+    set.status = 200
+    return {
+      status: 'Email sent successfully',
+    }
   },
   {
     body: t.Object({
