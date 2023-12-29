@@ -6,6 +6,7 @@ const envSchema = z.object({
     .default('development'),
   PORT: z.coerce.number().default(3333),
   RESEND_API_KEY: z.string(),
+  SENTRY_DSN: z.string(),
 })
 
 export const env = envSchema.parse(process.env)
