@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 const envSchema = z.object({
+  APIBRASIL_ENDPOINT: z.string(),
   NODE_ENV: z
     .enum(['development', 'test', 'production'])
     .default('development'),
