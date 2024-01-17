@@ -1,27 +1,12 @@
-import * as Sentry from '@sentry/bun'
 import { Elysia } from 'elysia'
 import { ZodError } from 'zod'
 
 import { env } from './env'
+
 import { AppError } from '@/http/errors/AppError'
 import { routes } from './http/routes'
 
-Sentry.init({
-  dsn: env.SENTRY_DSN,
-  environment: env.NODE_ENV,
-  ignoreErrors: [
-    'AppError',
-    'AppError',
-    'ZodError',
-    'VALIDATION',
-    'NOT_FOUND',
-    'PARSE',
-  ],
-  enabled: env.NODE_ENV !== 'development',
-  // We recommend adjusting this value in production, or using tracesSampler
-  // for finer control
-  tracesSampleRate: 1.0,
-})
+import { sentry } from './services/sentry'
 
 const app = new Elysia()
   .error({
@@ -43,7 +28,7 @@ const app = new Elysia()
           issues: error.format(),
         }
       default:
-        Sentry.captureException(error)
+        sentry.captureException(error)
     }
   })
   .use(routes)

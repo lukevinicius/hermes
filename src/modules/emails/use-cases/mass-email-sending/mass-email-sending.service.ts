@@ -1,6 +1,6 @@
 import csv from 'csvtojson'
 
-import { resend } from '@/email/client'
+import { resend } from '@/services/resend-client'
 
 interface IRequest {
   from: string

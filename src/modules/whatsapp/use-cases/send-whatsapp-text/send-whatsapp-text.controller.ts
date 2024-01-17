@@ -15,7 +15,7 @@ export const sendWhatsappText = new Elysia().post(
 
     set.status = 200
     return {
-      status: 'WhatsApp text sent successfully',
+      message: 'WhatsApp text sent successfully',
     }
   },
   {
