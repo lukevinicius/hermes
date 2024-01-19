@@ -19,7 +19,7 @@ export const sendEmail = new Elysia().post(
     })
 
     // unlink the files
-    await unlinkSync(emailTemplatePath)
+    unlinkSync(emailTemplatePath)
 
     set.status = 200
     return {

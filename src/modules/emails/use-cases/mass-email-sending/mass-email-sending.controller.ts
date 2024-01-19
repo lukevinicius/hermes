@@ -21,8 +21,8 @@ export const massEmailSending = new Elysia().post(
     })
 
     // unlink the files
-    await unlinkSync(csvPath)
-    await unlinkSync(emailTemplatePath)
+    unlinkSync(csvPath)
+    unlinkSync(emailTemplatePath)
 
     set.status = 200
     return {
