@@ -1,11 +1,12 @@
-import csv from 'csvtojson'
-
 import { resend } from '@/services/resend-client'
 
 interface IRequest {
   from: string
   subject: string
-  csvPath: string
+  users: {
+    name: string
+    email: string
+  }[]
   emailTemplatePath: string
 }
 
@@ -15,15 +16,14 @@ interface MassEmailSendingBody {
 }
 
 export class MassEmailSendingService {
-  async execute({ from, subject, csvPath, emailTemplatePath }: IRequest) {
-    // read the csv file and convert to json
-    const jsonFromCsv = await csv({
-      delimiter: ';',
-    }).fromFile(csvPath)
+  async execute({ from, subject, users, emailTemplatePath }: IRequest) {
+    // import file from 'file-system'
+    const emailTemplate = await import(emailTemplatePath)
 
-    // split the json in 50 emails per array
-    const emails = jsonFromCsv.reduce((acc, email, index) => {
-      const position = Math.floor(index / 50)
+    // split the users in 50 emails per array
+    const subArrayLength = 50
+    const emails = users.reduce((acc, email, index) => {
+      const position = Math.floor(index / subArrayLength)
 
       if (!acc[position]) {
         acc[position] = []
@@ -32,10 +32,7 @@ export class MassEmailSendingService {
       acc[position].push(email)
 
       return acc
-    }, [] as MassEmailSendingBody[])
-
-    // import file from 'file-system'
-    const emailTemplate = await import(emailTemplatePath)
+    }, [] as MassEmailSendingBody[][])
 
     // send the emails
     for (let i = 0; i < 3000; i++) {

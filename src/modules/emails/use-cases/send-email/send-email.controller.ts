@@ -6,7 +6,10 @@ export const sendEmail = new Elysia().post(
   '/send-email',
   async ({ body, set }) => {
     // Save the files
-    const emailTemplatePath = `${process.cwd()}/src/email/emailTemplate.tsx`
+    const emailTemplatePath = `${process.cwd()}/src/email/email-template-${
+      Math.floor(Math.random() * 1000000) + 1
+    }.tsx`
+
     await Bun.write(emailTemplatePath, body.emailTemplate)
 
     const sendEmailService = new SendEmailService()
@@ -31,10 +34,7 @@ export const sendEmail = new Elysia().post(
       from: t.String(),
       to: t.String(),
       subject: t.String(),
-      emailTemplate: t.File({
-        required: true,
-      }),
+      emailTemplate: t.String(),
     }),
-    type: 'multipart/form-data',
   },
 )

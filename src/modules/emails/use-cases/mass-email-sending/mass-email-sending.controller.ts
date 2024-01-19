@@ -5,10 +5,10 @@ import { MassEmailSendingService } from './mass-email-sending.service'
 export const massEmailSending = new Elysia().post(
   '/mass-email-sending',
   async ({ body, set }) => {
-    // Save the files
-    const csvPath = `${process.cwd()}/src/email/emails.csv`
-    await Bun.write(csvPath, body.csv)
-    const emailTemplatePath = `${process.cwd()}/src/email/emailTemplate.tsx`
+    const emailTemplatePath = `${process.cwd()}/src/email/email-template-${
+      Math.floor(Math.random() * 1000000) + 1
+    }.tsx`
+
     await Bun.write(emailTemplatePath, body.emailTemplate)
 
     const massEmailSendingService = new MassEmailSendingService()
@@ -16,12 +16,11 @@ export const massEmailSending = new Elysia().post(
     await massEmailSendingService.execute({
       from: body.from,
       subject: body.subject,
-      csvPath,
+      users: body.users,
       emailTemplatePath,
     })
 
     // unlink the files
-    unlinkSync(csvPath)
     unlinkSync(emailTemplatePath)
 
     set.status = 200
@@ -33,14 +32,13 @@ export const massEmailSending = new Elysia().post(
     body: t.Object({
       from: t.String(),
       subject: t.String(),
-      csv: t.File({
-        required: true,
-        type: 'text/csv',
-      }),
-      emailTemplate: t.File({
-        required: true,
-      }),
+      users: t.Array(
+        t.Object({
+          name: t.String(),
+          email: t.String(),
+        }),
+      ),
+      emailTemplate: t.String(),
     }),
-    type: 'multipart/form-data',
   },
 )
